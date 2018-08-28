@@ -1,0 +1,67 @@
+%------------styling---------%
+\documentclass[a4paper,11pt,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[cm]{fullpage}
+\usepackage{graphicx}
+\usepackage{layout}
+%---------to be changed for paper--------%
+
+\title{Census by Sensors}
+
+\begin{document}
+\maketitle
+%---------Sensing Environment-------%
+\section{\uppercase{Sensing Environment}}
+The Clifton Suspension Bridge (CSB) was fitted with a wireless sensing network for a study on rapid deployment of structural health monitoring systems. Data collected from the sensors can be used to automatically monitor, amongst other things, loading on the bridge to facilitate informed decisions about traffic management across the bridge. 
+
+\subsection{The Clifton Suspension Bridge}
+The CSB stands at $75$ m above the river Avon and spans $214$ m across the Avon Gorge joining Clifton to Leigh Woods. The desk is suspended via 81 pairs of vertical iron rods. Since it's opening in $1864$ the bridge has remained an important piece of infrastructure, today $8800$ vehicles cross daily on average. The bridge is bidirectional and has one lane for each direction that are accessible to cyclists, it has a $20$mph$^{-1}$ and speed limit and so it takes just over 24 seconds to drive across the span at that speed. There are two footpaths on each side of the bridge for pedestrians. Due to it's age and design, it is expected that the CSB will behave differently under loading to modern bridges.
+
+The bridge benefits from a toll barrier at both ends, this data was collected and shows when a vehicle drove onto the bridge accurate to $1$ minute. Vehicles traveling towards Leigh Woods pass through the toll barrier on the Clifton end of the bridge and those traveling towards Leigh Woods pass through the toll barrier on the Leigh Woods end There is no information available about cyclists and pedestrians.
+
+\subsection{Sensor Deployment}
+Due to time and cost constraints, accelerometers were only deployed at $2$ nodes on the bridge. Macdonald found that deck vibrations below $3$ Hz can be detected $26.8$ m from the midpoint and so $2$ accelerometers were placed at a node $26.8$ m from the midpoint. It is believed that the greatest response from vehicles entering or exiting the bridge can be found at the end of the deck and so $2$ accelerometers were placed at a second node at the Leigh Woods end of the bridge. At each node an accelerometer was placed on the north and south side of the bridge to allow both vertical and torsional motion to be measured. The Accelerometers have a $10$ ms$^{-2}$ range and a $5.2{\times}10$ ms$^{-2}$ resolution.
+
+In addition to the accelerometers, 2 displacement transducers are deployed at the Leigh Woods end of the bridge which measure vertical displacement of the deck on the north and south side of the bridge. However these sensors are not taken into consideration in this paper.
+
+All nodes are identified by the iron rod it is closest to therefore the node 26.8 m from the midpoint and the node at the Leigh Woods end of the bridge are referred to as rod 11LW and 40LW respectively. A comprehensive description of the wireless sensor network, sensor deployment and the study is available in REFERENCE SAMS PAPER AND FIND A GOOD PICTURE OF THE BRIDGE. DO I NEED TO TALK ABOUT WSN GATEWAY?
+
+\section{Segmenting and Processing the Sensor Readings}
+In order develop a method to count vehicles from the sensor readings we must have some ground truth. The toll barrier data shows when vehicles enter the bridge accurate to $1$ minute, and so the accelerometer responses can be segmented into $1$ minute windows where $n$ vehicles enter the bridge. There are 3 considerations with this segmentation:
+
+\begin{enumerate}
+\item \textbf{Vehicles from the previous minute might still be travelling across the bridge.} Only 1 minute windows with no toll barrier data $\delta$ minutes before and after are considered. $\delta$ should be chosen so that all vehicles on the bridge at minute $m$ have a toll barrier data entry at minute $m$ too. We set $\delta = 3$ minutes which is much longer than the 24 seconds it takes to drive across the bridge. 
+
+\item \textbf{pedestrians and cyclists may be on the bridge at the same time.} Only 1 minute windows that are earlier than $6$ am are selected to minimise the likelihood of of this happening.  
+
+\item \textbf{vehicles may enter the bridge at the end of the minute and the sensor readings will not be captured in that minute window.} The $1$ minute windows are extended to $2$ minutes after minute $m$ to capture all vehicles that pass a toll barrier at minute $m$. 
+\end{enumerate}
+
+
+IMAGES OF RAW ACCELEROMETER DATA TO BE PLACED HERE. \\
+
+The Northside and Southside 11LW accelerometers readings are featureless under loading whereas a clear structural response is observed in the 40LW accelerometers for both directions of travel. There is no obvious difference between the two 40LW readings and so we will only consider the 40LW Northside reading.
+
+\subsection{Scaling the Readings}
+To ensure that all readings have similar maximum and minimum amplitude a feature scaling is performed to reading $r$ such that $s = \frac{r - \mu_r}{\max(r) - \min(r)}$ where $\mu_r$ is the reading mean. The scaled $s$ has zero mean and range $\left[-1,1\right]$.
+
+\subsection{Finding the Accelerometer Reading Envelope}
+The responses are oscillatory and so a multi-modal sinusoidal fit to is feasible. However the responses are likely to contain a number of frequencies, some of which are a consequence of the bridge rather than the vehicles. Instead we look to summarise the normalised readings via their positive envelopes, we consider the 3 following methods for finding the envelopes.
+
+\begin{enumerate}
+\item \textbf{Moving Root Mean Square (RMS)}
+The Moving RMS computes the RMS over values in a sliding window. This envelope is parametrised by the sliding window size, $w$ as shown below. Sliding windows at the start or end of the readings are truncated appropriately. 
+
+$$e_i = \sqrt{\frac{1}{2w}\sum_{j=i-w}^{i+w}s_i} $$. 
+
+\item \textbf{Peak to Peak}
+The peaks, or local maxima of the responses are found, the envelope is then determined via spline interpolation over the the peaks. Linear interpolation is used. The envelope is parametrised by the minimum number of readings between peaks, $p$.
+
+\item \textbf{Analytic Signal}
+
+TOMORROWS WORK - WORK OUT WHAT THE HELL THIS IS!
+
+\end{enumerate}
+
+\end{document}

@@ -1,44 +1,30 @@
-function plotData(responses,title)
-% Plots all channels in data file as a subplot.
-% Inputs: data_file (.mat file) data file containing channel data
-close all;
-accelerometers = responses(:,2:5);
-accelerometer_names = {'11LW Northside', '11LW Southside', ...
-                        '40LW Northside', '40LW Southside'};
-                    
-displacements = responses(:,6:7);
-displacement_names = {'40LW Northside', '40LW Southside'};
+function plotData(responses)
 
-num_readings = size(responses,1);
+close all
+time = linspace(0,length(responses(:,2))/66.67,length(responses(:,2)));
 
-sampling_rate = 66.67; % 4000 readings a minute
-time = (1:num_readings)./sampling_rate;
+% 11LW North
+subplot(4,1,1)
+plot(time,responses(:,2)-mean(responses(:,2)))
+title('11LW North')
+% 11LW South
+subplot(4,1,2)
+plot(time,responses(:,3)-mean(responses(:,3)))
+title('11LW South')
+% 40LW North
+subplot(4,1,3)
+plot(time,responses(:,4)-mean(responses(:,4)))
+title('40LW North')
+% 40LW South
+subplot(4,1,4)
+plot(time,responses(:,5)-mean(responses(:,5)))
+title('40LW South')
+    
+xlabel('Time [s]')
+suplabel('Acceleration [ms^{-2}]','y');
 
-fig = figure;
-
-%figure
-plot(time,accelerometers)
-%ylim([0,12])
-legend(accelerometer_names,'location','southoutside','orientation','horizontal');
-%set(leg1,'Interpreter','latex');
-ylabel('Acceleration [ms^{-2}]')%,'Interpreter','latex')
-%xlabel('Time [s]','Interpreter','latex')
-
-% subplot(2,1,2)
-% plot(time,displacements)
-% 
-% legend(displacement_names,'location','southoutside','orientation','horizontal');
-% %set(leg2,'Interpreter','latex');
-% ylabel('Displacement [mm]')%,'Interpreter','latex')
-% xlabel('Time [s]')%,'Interpreter','latex')
-
-t = suptitle(title)
-%set(t,'Interpreter','latex');
-
-outfile = fullfile(rootDir(),'Paper','images',strcat(title,'.pdf'));
-orient(fig,'landscape')
-print(fig,outfile,'-bestfit','-dpdf')
-
-
+saveFigPDF(fullfile(rootDir,'Paper','images','All_raw_chans_Clifton.pdf'))
 end % plotData.m
+
+
 

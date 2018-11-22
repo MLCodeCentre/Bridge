@@ -2,7 +2,6 @@ function dataTimePreprocess
 
 % use information in vehicle_counts.csv to create 1 minute windows of n cars 
 
-
 params = config();
 
 file = fullfile(rootDir(),'Data','Toll_barrier','vehical_counts.csv');

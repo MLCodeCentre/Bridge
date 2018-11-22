@@ -30,11 +30,11 @@ fprintf('Found %d Toll Minutes with %d vehicles \n',size(counts_okay,1),total)
 
 % getting minutes that are late at night.
 [Hour, Min, Sec] = hms(vehicle_counts.datetime);
-hour_okay = Hour < 6;
+hour_okay = Hour < 7 | Hour > 22;
 vehicle_counts = vehicle_counts(hour_okay,:);
 
 %% Opening each spreadsheet and finding counts within there. 
-struct_files = dir(fullfile(rootDir(),'Data','Structural Data Sample','*Mon.csv'));
+struct_files = dir(fullfile(rootDir(),'Data','Structural Data Sample','*.csv'));
 num_files = size(struct_files,1);
 out_file_ind = 1;
 
@@ -50,7 +50,7 @@ for file_num = 1:num_files
     
     if size(datetimes_to_get,1) > 1
         fprintf('opening %s \n',file_name)
-        readings = readtable(fullfile(rootDir(),'Data','Structural Data Sample',file_name));
+        readings = readtable(fullfile(rootDir(),'Data','Structural Data',file_name));
         
         num_datetimes = size(datetimes_to_get,1);
         for datetime_num = 1:num_datetimes
@@ -73,7 +73,7 @@ function responses = getResponseFromFile(readings,response_datetime,time_after)
     response_start = posixtime(response_datetime);
     response_start_ind = find(readings.time_stamp/1000 == response_start);
     response_end_ind = floor(response_start_ind + time_after*66.666667);
-    responses = readings(response_start_ind : response_end_ind-1,:);
+    responses = readings(response_start_ind : min(size(readings,1),response_end_ind-1),:);
 end
 
 function responses = calibrateResponses(responses)

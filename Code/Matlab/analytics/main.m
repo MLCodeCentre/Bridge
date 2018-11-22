@@ -1,23 +1,17 @@
-function main()
+function AIC_min = main(reading)
 
 close all;
 params = config();
 
-data = loadOnes();
-%data = loadTwos();
+time = linspace(0, length(reading)/params.sampling_rate, length(reading));
+%plot(time, data_sample)
+scaled = normaliseSignal(reading);
+plot(time,scaled)
+window_size = 20;
+reading_envolope = moveRMS(scaled,window_size);
+reading_envolope = reading_envolope - min(reading_envolope);
+hold on
+plot(time,reading_envolope)
 
-num_data = size(data,1);
-
-for data_num = 1:1
-    data_sample = data(27,:);
-    time = linspace(0, length(data_sample)/params.sampling_rate, length(data_sample));
-    %plot(time, data_sample)
-    scaled = normaliseSignal(data_sample);
-    plot(time,scaled)
-    envolope = getSignalEnvolope(scaled);
-    hold on
-    plot(time,envolope)
-    %[~, fit_params] = fitFuncToData(stats, time);
-    %fit_params
-
-end
+[~, ~, AIC_min] = fitFuncToData(reading_envolope', time);
+%fit_params

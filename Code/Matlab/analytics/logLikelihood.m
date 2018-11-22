@@ -9,5 +9,5 @@ function ll = logLikelihood(data, fit)
 % ll = sum(log(l));
 % it follows the the ll is just
 RSS = sum((data-fit).^2);
-n = length(data);
-ll = -n*log(RSS);
+m = length(data);
+ll = -(m/2)*log(RSS);

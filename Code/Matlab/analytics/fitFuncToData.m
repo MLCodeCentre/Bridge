@@ -22,9 +22,15 @@ p = 5;
 fit_params = zeros(params.itters, p);
 
 % initial AIC calculation
+e = data-fit;
 m = length(data);
 Rs = sum((data-fit).^2);
 lls = -(m/2)*log(Rs);
+
+lambda = [0.1, min(e)];
+e_lambda = boxCorrection(e,lambda);
+e_lambda_bar = mean(e_lambda);
+ll_boxes = -(m/2)*log((sum(e_lambda-e_lambda_bar).^2)/m) + (lambda-1)*sum(log(Rs));
 %k = 1;
 %[aics, bics] = aicbic(lls,k,m);
 
@@ -39,7 +45,8 @@ for n = 1:N
     [fit_params_new, fit] = optimiseLogNorm(data, time, fit);
     %fits{n} = fit;
     fit_params(n,:) = fit_params_new;
-        
+    
+    e = data-fit;
     R = sum((data-fit).^2);
     Rs = [Rs, R];
     % calculate AIC
@@ -48,6 +55,13 @@ for n = 1:N
     sigma = sqrt(std(e));
     ll = sum(log(normpdf(e,0,sigma)));
     lls = [lls,ll];
+    
+    lambda = [0.1,min(e)];
+    e_lambda = boxCorrection(e,lambda);
+    e_lambda_bar = mean(e_lambda);
+    ll_box = -(m/2)*log((sum(e_lambda-e_lambda_bar).^2)/m) + (lambda-1)*sum(log(R));
+    ll_boxes = [ll_boxes, ll_box];
+    
     
                       
     % plot data and new fit
@@ -95,3 +109,15 @@ fit_params
 MCps
 
 end %fitFuncToData.m
+
+function y = boxCorrection(x,lambda)
+    x_size = length(x);
+    y = zeros(1,x_size);
+    for i = 1:x_size
+        if lambda(1) == 0
+           y(i) = log(x(i)+lambda(2)); 
+        else
+           y(i) = ((x(i)+lambda(2)^lambda(1) - 1))/lambda(1); 
+        end
+    end
+end

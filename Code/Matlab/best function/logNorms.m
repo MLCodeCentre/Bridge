@@ -1,5 +1,5 @@
-function y = logNorms(theta, t_range, fit)
+function y = logNorms(theta, t_range, data, fit)
 
-y = fit + logNorm(t_range,theta);
+y = fit + logNorm(t_range,theta)-data;
  
 end

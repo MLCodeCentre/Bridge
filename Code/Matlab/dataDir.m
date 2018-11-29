@@ -1,3 +1,3 @@
 function path = dataDir()
-    path = 'C:\Users\ts1454\Bridge\Data\September';
+    path = 'C:\Users\tom\PhD\Bridge\Data\September';
 end

@@ -1,4 +1,4 @@
-function [optimal_fit, optimal_params, AIC_max] = fitFuncToData(data, time)
+function [optimal_fit, optimal_params, num_vehicles] = fitFuncToData(data, time)
 
 % fits N log normal functions to data using lsqcurve fit. Inits and
 % boundary conditions are set in config. However the init tau is find from
@@ -23,11 +23,13 @@ fit_params = zeros(params.itters, p);
 
 % initial AIC calculation
 m = length(data);
-Rs = sum((data-fit).^2);
-lls = -(m/2)*log(Rs);
+rs = sum((data-fit).^2);
+lls = -(m/2)*log(rs);
+chi_squareds = [];
 %k = 1;
 %[aics, bics] = aicbic(lls,k,m);
-
+rsquareds = [];
+adjrsquareds = [];
 % perform fits
 figure;
 N = params.itters;
@@ -37,11 +39,15 @@ for n = 1:N
 
     %fitting the logNorm Function
     [fit_params_new, fit] = optimiseLogNorm(data, time, fit);
-    %fits{n} = fit;
+    fits{n} = fit;
     fit_params(n,:) = fit_params_new;
-        
-    R = sum((data-fit).^2);
-    Rs = [Rs, R];
+    
+    e = data - fit;
+    r = sum(e.^2);
+    chi_squared = sum((e.^2)./fit);
+    chi_squareds = [chi_squareds, chi_squared];
+    
+    rs = [rs, r];
     % calculate AIC
     %ll = -(m/2)*log(R/m);
     e = (data-fit);
@@ -49,6 +55,9 @@ for n = 1:N
     ll = sum(log(normpdf(e,0,sigma)));
     lls = [lls,ll];
     
+    [rsquared_val, adjrsquared] = rsquared(data,fit,n*p);
+    rsquareds = [rsquareds, rsquared_val];
+    adjrsquareds = [adjrsquareds, adjrsquared];
                       
     % plot data and new fit
     subplot(params.itters, 1, n)
@@ -74,7 +83,7 @@ title('Akaike Information Criterion')
 
 subplot(2,1,2)
 % plotting the AICs 
-plot(0:params.itters, Rs)
+plot(0:params.itters, rs)
 set(gca,'xtick',0:params.itters)
 set(gca,'xticklabel',0:params.itters)
 xlabel('Number of Vechiles')
@@ -83,15 +92,11 @@ title('Sum Square Error')
 
 %finding optimal number of fits
 %AIC_min = max(1,(find(AICs == max(AICs))-1));
-AIC_max = find(AICs == max(AICs))-1;
-optimal_fit = fits{AIC_max};
+aic_min = find(aics == min(aics));
+optimal_fit = fits{aic_min};
 %figure;
 %plot(optimal_fit)
-optimal_params = fit_params(1:AIC_max, :);
-
-
-Rs
-fit_params
-MCps
+optimal_params = fit_params(1:aic_min, :);
+num_vehicles = aic_min - 1;
 
 end %fitFuncToData.m

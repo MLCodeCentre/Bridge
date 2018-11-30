@@ -22,17 +22,12 @@ p = 5;
 fit_params = zeros(params.itters, p);
 
 % initial AIC calculation
+e = data-fit;
 m = length(data);
-rs = sum((data-fit).^2);
-lls = -(m/2)*log(rs);
-chi_squareds = [];
-%k = 1;
-%[aics, bics] = aicbic(lls,k,m);
-rsquareds = [];
-adjrsquareds = [];
-% perform fits
-figure;
-N = params.itters;
+
+logLs = [];
+Rs = [];
+N = 3;
 for n = 1:N
     % residual is the difference between the data and fit
     % we begin our initial fitting at the maximum of stats
@@ -42,50 +37,42 @@ for n = 1:N
     fits{n} = fit;
     fit_params(n,:) = fit_params_new;
     
-    e = data - fit;
-    r = sum(e.^2);
-    chi_squared = sum((e.^2)./fit);
-    chi_squareds = [chi_squareds, chi_squared];
+    e = data-fit;
+    R = sum((data-fit).^2);
+    Rs = [Rs, R];
     
-    rs = [rs, r];
-    % calculate AIC
-    %ll = -(m/2)*log(R/m);
-    e = (data-fit);
-    sigma = sqrt(std(e));
-    ll = sum(log(normpdf(e,0,sigma)));
-    lls = [lls,ll];
-    
-    [rsquared_val, adjrsquared] = rsquared(data,fit,n*p);
-    rsquareds = [rsquareds, rsquared_val];
-    adjrsquareds = [adjrsquareds, adjrsquared];
-                      
+    % THIS IS NEW!! USING A GARCH LIKELIHOOD. 
+    logL = garchLogL(e);
+    logLs = [logLs, logL];                  
     % plot data and new fit
     subplot(params.itters, 1, n)
     plot(time, data);
     hold on
     plot(time, fit);
     legend('Data',sprintf('Fit %d',n),'Location','northeast'); 
+    
 end
-K = [1,(1:N)*p + 1];
-[aics, bics] = aicbic(lls,K,m);
+K = [(1:N)*p];
+[aics, bics] = aicbic(logLs,K,m);
 %aics = [aics,aic]; bics = [bics,bic]; 
+aics
 
 figure;
 subplot(2,1,1)
 % xlabel('Time')
 % plotting the AICs 
-plot(0:params.itters, aics)
-set(gca,'xtick',0:params.itters)
-set(gca,'xticklabel',0:params.itters)
+plot(1:N, aics)
+set(gca,'xtick',1:N)
+set(gca,'xticklabel',1:N)
 xlabel('Number of Vechiles')
 ylabel('AIC')
 title('Akaike Information Criterion')
 
 subplot(2,1,2)
 % plotting the AICs 
-plot(0:params.itters, rs)
-set(gca,'xtick',0:params.itters)
-set(gca,'xticklabel',0:params.itters)
+plot(1:N, Rs)
+set(gca,'xtick',1:N)
+set(gca,'xticklabel',1:N)
 xlabel('Number of Vechiles')
 ylabel('Sum Squared Error')
 title('Sum Square Error')
@@ -97,6 +84,6 @@ optimal_fit = fits{aic_min};
 %figure;
 %plot(optimal_fit)
 optimal_params = fit_params(1:aic_min, :);
-num_vehicles = aic_min - 1;
+num_vehicles = aic_min;
 
 end %fitFuncToData.m

@@ -12,6 +12,8 @@ reading_envolope = moveRMS(scaled,window_size);
 reading_envolope = reading_envolope - min(reading_envolope);
 hold on
 plot(time,reading_envolope)
+xlabel('Time [s]')
+ylabel('Acceleration [ms^{-2}]')
 
 [~, ~, AIC_min] = fitFuncToData(reading_envolope', time);
 %fit_params

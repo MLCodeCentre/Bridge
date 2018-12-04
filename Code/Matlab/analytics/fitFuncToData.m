@@ -19,7 +19,6 @@ params = config();
 fit = zeros(size(data));
 % num of params
 p = 5;
-fit_params = zeros(params.itters, p);
 
 % initial AIC calculation
 e = data-fit;
@@ -28,6 +27,8 @@ m = length(data);
 logLs = [];
 Rs = [];
 N = 3;
+fit_params = zeros(N, p);
+
 for n = 1:N
     % residual is the difference between the data and fit
     % we begin our initial fitting at the maximum of stats
@@ -49,7 +50,9 @@ for n = 1:N
     plot(time, data);
     hold on
     plot(time, fit);
-    legend('Data',sprintf('Fit %d',n),'Location','northeast'); 
+    legend('IAE',sprintf('Fit %d',n),'Location','northeast'); 
+    xlabel('Time [s]')
+    ylabel('Acceleration [ms^{-2}]')
     
 end
 K = [(1:N)*p];

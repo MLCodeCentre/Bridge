@@ -3,7 +3,7 @@ close all
 
 %% simulating data 
 m = 800;
-p = 4;
+p = 5;
 t = linspace(0,120,m);
 
 %2 lognorms

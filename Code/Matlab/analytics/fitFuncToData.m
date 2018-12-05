@@ -43,7 +43,7 @@ for n = 1:N
     Rs = [Rs, R];
     
     % THIS IS NEW!! USING A GARCH LIKELIHOOD. 
-    logL = garchLogL(e);
+    logL = garchLogL(e,3,3);
     logLs = [logLs, logL];                  
     % plot data and new fit
     subplot(params.itters, 1, n)

@@ -9,7 +9,6 @@ num_files = size(files,1);
 %shuff = randperm(num_files);
 %files = files(shuff);
 
-
 for file_num = i:num_files
     file = files(file_num);
     file_name = file.name

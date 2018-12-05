@@ -5,7 +5,7 @@ params = config();
 theta_0 =  [0,1,1,60,0];     
 
 LB = [0, 0, 0.1, 0, 0];
-UB = [10, 10, 10, 110, 0.2];
+UB = [10, 10, 10, 110, 0.1];
 
 f = @(theta) logNorms(theta, t, data, fit);
 %[theta, theta_val] = lsqnonlin(f,theta_0,LB,UB)

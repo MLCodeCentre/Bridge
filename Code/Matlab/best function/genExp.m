@@ -1,10 +1,10 @@
-function y = genExp(params, t_range)
+function y = genExp(t_range, theta)
 
 % Unwrap parameters
-Alpha = params(1);
-Beta = params(2);
-A = params(3);
-tau = params(4);
+Alpha = theta(1);
+Beta = theta(2);
+A = theta(3);
+tau = theta(4);
 % augment time by shift and scale
 
 % calculate fit

@@ -1,8 +1,8 @@
 function findOptimalTheta
 
-folder = 'both_1';
-files = dir(fullfile(dataDir,'Train Samples',folder,'*.mat'));
-num_files = size(files,1);
+folder = 'Clifton_1';
+files = dir(fullfile(dataDir,'Test Samples',folder,'*.mat'));
+num_files = size(files,1)
 shuff = randperm(num_files);
 files = files(shuff);
 results = {};
@@ -16,7 +16,7 @@ for file_num = 1:num_files
     file = files(file_num);
     file_name = file.name
     %file_name = '7.mat';
-    full_file_name = fullfile(dataDir,'Train Samples',folder,file_name);
+    full_file_name = fullfile(dataDir,'Test Samples',folder,file_name);
     file_load = load(full_file_name);
     responses = file_load.responses;
     reading = responses(:,4); % 40LW N
@@ -38,9 +38,7 @@ for file_num = 1:num_files
     % finding theta
     plot(reading_envelope)
     fit = zeros(size(reading_envelope));
-    [theta_solve, ~] = optimiseLogNorm(reading_envelope, time, fit);
+    [theta_solve, ~] = optimiseSkewedNormal(reading_envelope, time, fit);
     
     thetas(file_num,:) = theta_solve
 end
-
-hists = 1

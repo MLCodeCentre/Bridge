@@ -21,16 +21,22 @@ vehicle_counts = vehicle_counts(before_okay & after_okay,:);
 
 % getting minutes that have right total
 if strcmp(toll,'Clifton')
-    counts_okay = vehicle_counts.Clifton_no_pass + vehicle_counts.Clifton_pass == total;
+    counts_okay = (vehicle_counts.Clifton_no_pass + vehicle_counts.Clifton_pass == total) & ...
+        (vehicle_counts.LW_no_pass + vehicle_counts.LW_pass == 0);
 elseif strcmp(toll,'LW')
-    counts_okay = vehicle_counts.LW_no_pass + vehicle_counts.LW_pass == total;
+    counts_okay = (vehicle_counts.LW_no_pass + vehicle_counts.LW_pass == total) & ...
+        (vehicle_counts.Clifton_no_pass + vehicle_counts.Clifton_pass == 0);
+elseif strcmp(toll,'both')
+    counts_okay = vehicle_counts.Total == total;
 end
+
+
 vehicle_counts = vehicle_counts(counts_okay,:);
 fprintf('Found %d Toll Minutes with %d vehicles \n',size(counts_okay,1),total)
 
 % getting minutes that are late at night.
 [Hour, Min, Sec] = hms(vehicle_counts.datetime);
-hour_okay = Hour < 7 | Hour > 22;
+hour_okay = Hour < 24;% | Hour > 20;
 vehicle_counts = vehicle_counts(hour_okay,:);
 
 %% Opening each spreadsheet and finding counts within there. 

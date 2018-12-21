@@ -2,11 +2,14 @@ function resnorm = findBestFunction()
 
 close all
 
-files_Clifton_dir = fullfile(dataDir(),'Clifton_total_1_threshold_2');
-files_LW_dir = fullfile(dataDir(),'LW_total_1_threshold_2');
+files_Clifton_dir = fullfile(dataDir(),'Test Samples','LW_1');
+files_LW_dir = fullfile(dataDir(),'Test Samples','LW_1');
+
+Clifton_files = dir(fullfile(files_Clifton_dir,'*.mat'));
+LW_files = dir(fullfile(files_LW_dir,'*.mat'));
 
 function_types = {'LogNormal','Exp','Gamma','Weibell'};
-function_types = {'LogNormal'};
+%function_types = {'LogNormal'};
 num_function_types = length(function_types);
 
 num_responses = 10; % each
@@ -19,7 +22,7 @@ for function_type_ind = 1:num_function_types
     for file_ind = 1:num_responses
         fprintf('Fitting %s to file %d\n',char(function_type),file_ind);
         % Clifton
-        file_name = strcat([num2str(file_ind),'.mat']);
+        file_name = Clifton_files(file_ind).name;
         responses_load = load(fullfile(files_Clifton_dir,file_name));
         responses = responses_load.responses;
         response = responses(:,4);
@@ -30,7 +33,7 @@ for function_type_ind = 1:num_function_types
             norms(2*file_ind - 1,function_type_ind) = MSE;
         end
         % LW
-        file_name = strcat([num2str(file_ind),'.mat']);
+        file_name = LW_files(file_ind).name;
         responses_load = load(fullfile(files_LW_dir,file_name));
         responses = responses_load.responses;
         response = responses(:,4);
@@ -45,4 +48,4 @@ for function_type_ind = 1:num_function_types
     end
 end
 norms
-%save(fullfile(dataDir(),'September','norms.mat'),'norms')   
+save(fullfile(dataDir(),'September','norms.mat'),'norms')   

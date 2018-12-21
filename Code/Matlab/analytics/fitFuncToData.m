@@ -1,4 +1,4 @@
-function [optimal_fit, optimal_params, num_vehicles] = fitFuncToData(data, time)
+function [num_vehicles,pcaf,logLqs] = fitFuncToData(data, time)
 
 % fits N log normal functions to data using lsqcurve fit. Inits and
 % boundary conditions are set in config. However the init tau is find from
@@ -18,75 +18,97 @@ params = config();
 % instatiate the fit and errors
 fit = zeros(size(data));
 % num of params
-p = 5;
-
+p = 4;
+thresh = 0.1;
+q = 8;
 % initial AIC calculation
 e = data-fit;
+Rs(1) = sum(e.^2);
 m = length(data);
-
-logLs = [];
-Rs = [];
 N = 3;
 fit_params = zeros(N, p);
+[~,logL] = ARlogL(e,q,data,thresh);
+logLs(1) = logL;
+logLqs = zeros(N,q);
 
 for n = 1:N
     % residual is the difference between the data and fit
     % we begin our initial fitting at the maximum of stats
 
     %fitting the logNorm Function
+    %[fit_params_new, fit] = optimiseLogNorm(data, time, fit);
     [fit_params_new, fit] = optimiseLogNorm(data, time, fit);
     fits{n} = fit;
-    fit_params(n,:) = fit_params_new;
+    fit_params(n,:) = fit_params_new(1:p);
     
     e = data-fit;
     R = sum((data-fit).^2);
-    Rs = [Rs, R];
+    Rs(n+1) = R;
     
-    % THIS IS NEW!! USING A GARCH LIKELIHOOD. 
-    logL = garchLogL(e,3,3);
-    logLs = [logLs, logL];                  
+    % THIS IS NEW!! USING AN AR LIKELIHOOD. 
+%     for Q = 1:q
+%         [~,logL,~,~] = ARlogL(e,Q,data,thresh);
+%         logLqs(n,Q) = logL; 
+%     end
+    [~,logL,~,pcaf] = ARlogL(e,q,data,thresh);
+    logLs(n+1) = logL;                  
     % plot data and new fit
-    subplot(params.itters, 1, n)
+    subplot(N, 1, n)
     plot(time, data);
     hold on
     plot(time, fit);
-    legend('IAE',sprintf('Fit %d',n),'Location','northeast'); 
-    xlabel('Time [s]')
+    leg = legend('IAE',sprintf('$f_%d(t)$',n),'Location','northeast'); 
+    leg.FontSize = 11;
+    set(leg, 'Interpreter', 'latex')
+    xlabel('t [s]')
     ylabel('Acceleration [ms^{-2}]')
     
 end
-K = [(1:N)*p];
+K = [1,(1:N)*p];
 [aics, bics] = aicbic(logLs,K,m);
 %aics = [aics,aic]; bics = [bics,bic]; 
 aics
 
+% figure;
+% plot(time, data);
+% hold on
+% plot(time, fit);
+% leg = legend('IAE',sprintf('$f_%d(t)$',n),'Location','northeast');
+% set(leg, 'Interpreter', 'latex')
+% xlabel('t [s]')
+% ylabel('Acceleration [ms^{-2}]')
+
 figure;
-subplot(2,1,1)
 % xlabel('Time')
 % plotting the AICs 
-plot(1:N, aics)
-set(gca,'xtick',1:N)
-set(gca,'xticklabel',1:N)
-xlabel('Number of Vechiles')
+yyaxis right
+plot(0:N, aics,'--*')
 ylabel('AIC')
-title('Akaike Information Criterion')
 
-subplot(2,1,2)
+xlabel('Number of Vehicles')
+set(gca,'xtick',0:N)
+set(gca,'xticklabel',0:N)
+
+%title('Akaike Information Criterion')
+
 % plotting the AICs 
-plot(1:N, Rs)
-set(gca,'xtick',1:N)
-set(gca,'xticklabel',1:N)
-xlabel('Number of Vechiles')
-ylabel('Sum Squared Error')
-title('Sum Square Error')
+yyaxis left
+plot(0:N, Rs,'--*')
+ylabel('Sum Squared Error [ms^{-2}]')
+leg.FontSize = 11;
+grid on;
+% set(gca,'xtick',1:N)
+% set(gca,'xticklabel',1:N)
+
+%title('Sum Square Error')
 
 %finding optimal number of fits
 %AIC_min = max(1,(find(AICs == max(AICs))-1));
 aic_min = find(aics == min(aics));
-optimal_fit = fits{aic_min};
+%optimal_fit = fits{aic_min};
 %figure;
 %plot(optimal_fit)
-optimal_params = fit_params(1:aic_min, :);
-num_vehicles = aic_min;
+%optimal_params = fit_params(1:aic_min, :);
+num_vehicles = aic_min-1;
 
 end %fitFuncToData.m

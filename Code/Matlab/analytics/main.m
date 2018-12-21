@@ -1,4 +1,4 @@
-function AIC_min = main(reading)
+function [AIC_min,pcaf,logLqs] = main(reading)
 
 close all;
 params = config();
@@ -9,11 +9,12 @@ scaled = normaliseSignal(reading);
 plot(time,scaled)
 window_size = 20;
 reading_envolope = moveRMS(scaled,window_size);
-reading_envolope = reading_envolope - min(reading_envolope);
+offset = mean(reading_envolope(reading_envolope<0.01))
+reading_envolope = reading_envolope - offset;
 hold on
 plot(time,reading_envolope)
 xlabel('Time [s]')
 ylabel('Acceleration [ms^{-2}]')
 
-[~, ~, AIC_min] = fitFuncToData(reading_envolope', time);
+[AIC_min,pcaf,logLqs] = fitFuncToData(reading_envolope', time);
 %fit_params

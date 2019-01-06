@@ -1,6 +1,6 @@
 function findOptimalTheta
 
-folder = 'Clifton_1';
+folder = 'both_1';
 files = dir(fullfile(dataDir,'Test Samples',folder,'*.mat'));
 num_files = size(files,1)
 shuff = randperm(num_files);

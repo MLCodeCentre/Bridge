@@ -25,7 +25,7 @@ q = 8;
 e = data-fit;
 Rs(1) = sum(e.^2);
 m = length(data);
-N = 3;
+N = 4;
 fit_params = zeros(N, p);
 [~,logL] = ARlogL(e,q,data,thresh);
 logLs(1) = logL;
@@ -37,7 +37,7 @@ for n = 1:N
 
     %fitting the logNorm Function
     %[fit_params_new, fit] = optimiseLogNorm(data, time, fit);
-    [fit_params_new, fit] = optimiseSkewedNormal(data, time, fit);
+    [fit_params_new, fit] = optimiseFit('logNorm', data, time, fit);
     fits{n} = fit;
     fit_params(n,:) = fit_params_new(1:p);
     
@@ -57,13 +57,15 @@ for n = 1:N
     plot(time, data);
     hold on
     plot(time, fit);
-    leg = legend('IAE',sprintf('$f_%d(t)$',n),'Location','northeast'); 
+    leg = legend('IAE',sprintf('$g_%d(t)$',n),'Location','northeast'); 
     leg.FontSize = 11;
     set(leg, 'Interpreter', 'latex')
-    xlabel('t [s]')
-    ylabel('Acceleration [ms^{-2}]')
+   
+    %ylabel('Acceleration [ms^{-2}]')
     
 end
+suplabel('Acceleration [ms^{-2}]','y')
+xlabel('t [s]')
 K = [1,(1:N)*p];
 [aics, bics] = aicbic(logLs,K,m);
 %aics = [aics,aic]; bics = [bics,bic]; 
@@ -83,7 +85,7 @@ figure;
 % plotting the AICs 
 yyaxis right
 plot(0:N, aics,'--*')
-ylabel('AIC')
+ylabel('Akaike Information Criterion')
 
 xlabel('Number of Vehicles')
 set(gca,'xtick',0:N)
@@ -93,9 +95,10 @@ set(gca,'xticklabel',0:N)
 
 % plotting the AICs 
 yyaxis left
-plot(0:N, Rs,'--*')
+plot(0:N, Rs,'--o')
 ylabel('Sum Squared Error [ms^{-2}]')
-leg.FontSize = 11;
+legend('SSE','AIC')
+leg.FontSize = 12;
 grid on;
 % set(gca,'xtick',1:N)
 % set(gca,'xticklabel',1:N)

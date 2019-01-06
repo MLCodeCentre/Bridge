@@ -9,7 +9,7 @@ scaled = normaliseSignal(reading);
 plot(time,scaled)
 window_size = 20;
 reading_envolope = moveRMS(scaled,window_size);
-offset = mean(reading_envolope(reading_envolope<0.01))
+offset = max(reading_envolope(reading_envolope<0.01))
 reading_envolope = reading_envolope - offset;
 hold on
 plot(time,reading_envolope)

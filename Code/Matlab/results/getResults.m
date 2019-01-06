@@ -1,4 +1,4 @@
-function getResults(barrier,total)
+function computed = getResults(barrier,total)
 
 total = num2str(total)
 % Analyse ones get
@@ -17,7 +17,7 @@ for file_num = 1:num_files
     
     file = files(file_num);
     file_name = file.name
-    %file_name = '7.mat';
+    %file_name = '22.mat';
     full_file_name = fullfile(dataDir,'Test Samples',folder,file_name);
     file_load = load(full_file_name);
     responses = file_load.responses;

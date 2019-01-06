@@ -1,15 +1,13 @@
-function y = weibellFit(params,t_range)
+function y = weibellFit(t_range,theta)
 
-K = params(1);
-Lambda = params(2);
-A = params(3);
-tau = params(4);
+K = theta(1);
+Lambda = theta(2);
+gamma = theta(3);
+tau = theta(4);
+t_star = theta(5);
 
 for t_ind = 1:size(t_range,2)
     t = t_range(t_ind);
-    if t >= tau
-        y(t_ind) = A.*(K/Lambda).*(((t-tau)/Lambda).^(K-1)).*exp(-((t-tau)/Lambda).^(K));
-    else
-        y(t_ind) = zeros(size(t,2),1)';
-    end
+    t = t-tau;
+    y(t_ind) = gamma*wblpdf(t,K,Lambda) + t_star;
 end

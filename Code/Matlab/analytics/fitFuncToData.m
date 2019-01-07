@@ -36,8 +36,8 @@ for n = 1:N
     % we begin our initial fitting at the maximum of stats
 
     %fitting the logNorm Function
-    %[fit_params_new, fit] = optimiseLogNorm(data, time, fit);
-    [fit_params_new, fit] = optimiseSkewedNormal(data, time, fit);
+    [fit_params_new, fit] = optimiseLogNorm(data, time, fit);
+    %[fit_params_new, fit] = optimiseSkewedNormal(data, time, fit);
     fits{n} = fit;
     fit_params(n,:) = fit_params_new(1:p);
     

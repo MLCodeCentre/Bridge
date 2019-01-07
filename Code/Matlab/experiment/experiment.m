@@ -5,7 +5,7 @@ close all
 plot(t,data)
 figure
 m = 8000;
-q = 10;
+q = 8;
 thresh = 0.1;
 %% fitting to the data
 fit = zeros(size(t));

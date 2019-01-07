@@ -4,7 +4,7 @@ function [theta_solve, fit] = optimiseLogNorm(data, t, fit)
 theta_0 =  [1,1,1,10,0];     
 
 LB = [0, 0, 0, 0, 0];
-UB = [3, 3,  2,  115, 0.05];
+UB = [3, 3,  2,  115, 0.01];
 
 f = @(theta) logNorms(theta, t, data, fit);
 %theta_solve = lsqnonlin(f,theta_0,LB,UB)

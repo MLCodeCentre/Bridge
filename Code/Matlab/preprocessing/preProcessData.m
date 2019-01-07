@@ -2,7 +2,7 @@ function preProcessData(response)
 
 response = response - mean(response);
 
-xmin = 60; xmax = 80;
+xmin = 20; xmax = 100;
 ymin = -0.2; ymax = 1.2;
 
 % Raw input data
@@ -23,11 +23,11 @@ ylim([-1.2,1.2])
 % Finding the envolope
 % move RMS
 subplot(4,1,2)
-w = 5;
+w = 20;
 RMS_data = moveRMS(norm_response,w);
-plot(time, RMS_data); title('Move RMS'); %ylabel('Acceleration [ms^{-2}]');
-leg1 = legend(strcat(['$w = ',num2str(w),'$']));
-set(leg1,'Interpreter','Latex')
+plot(time, RMS_data); title('MRMS (w=20)'); %ylabel('Acceleration [ms^{-2}]');
+%leg1 = legend(strcat(['$w = ',num2str(w),'$']));
+%set(leg1,'Interpreter','Latex','FontSize',12)
 xlim([xmin,xmax])
 ylim([ymin,ymax])
 
@@ -35,9 +35,9 @@ ylim([ymin,ymax])
 subplot(4,1,3)
 p = 5;
 PK_data = envelope(norm_response,p,'peak');
-plot(time, PK_data); title('Peak to Peak'); %xlabel('Time [secs]'); ylabel('Acceleration [ms^{-2}]');
-leg2 = legend(strcat(['$p = ',num2str(p),'$']));
-set(leg2,'Interpreter','Latex')
+plot(time, PK_data); title('Peak to Peak (p=5)'); %xlabel('Time [secs]'); ylabel('Acceleration [ms^{-2}]');
+%leg2 = legend(strcat(['$p = ',num2str(p),'$']));
+%set(leg2,'Interpreter','Latex','FontSize',12)
 xlim([xmin,xmax])
 ylim([ymin,ymax])
 
@@ -47,7 +47,7 @@ subplot(4,1,4)
 fl = 230; 
 AL_data = envelope(norm_response);
 plot(time, AL_data); title('Analytic Signal'); % ylabel('Acceleration [ms^{-2}]');
-xlabel('Time [s]');
+xlabel('t [s]');
 % leg3 = legend(strcat(['$fl = ', num2str(fl),'$']));
 % set(leg3,'Interpreter','Latex')
 xlim([xmin,xmax])
@@ -55,4 +55,4 @@ ylim([ymin,ymax])
 suplabel('Acceleration [ms^{-2}]','y');
 
 %title('Peak to Peak'); xlabel('Time [secs]'); ylabel('Acceleration [ms^{-2}]');
-saveFigPDF(fullfile(rootDir(),'Paper','images','Envelopes.pdf'))
+%saveFigPDF(fullfile(rootDir(),'Paper','images','Envelopes.pdf'))

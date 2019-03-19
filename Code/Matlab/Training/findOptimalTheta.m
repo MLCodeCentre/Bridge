@@ -38,7 +38,7 @@ for file_num = 1:num_files
     % finding theta
     plot(reading_envelope)
     fit = zeros(size(reading_envelope));
-    [theta_solve, ~] = optimiseSkewedNormal(reading_envelope, time, fit);
+    [theta_solve, ~] = optimiseFit('logNorm', reading_envelope, time, fit);
     
     thetas(file_num,:) = theta_solve
 end

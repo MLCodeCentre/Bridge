@@ -20,7 +20,7 @@ subplot(4,1,4)
 plot(time,responses(:,5)-mean(responses(:,5)))
 title('40LW South')
     
-xlabel('Time [s]')
+xlabel('t [s]')
 suplabel('Acceleration [ms^{-2}]','y');
 
 saveFigPDF(fullfile(rootDir,'Paper','images','All_raw_chans_Clifton.pdf'))

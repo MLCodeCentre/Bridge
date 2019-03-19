@@ -14,7 +14,7 @@ f = @(theta) logNorms(theta, t, data, fit);
 disp('Running Global search')
 problem = createOptimProblem('lsqnonlin','objective',f,'x0',theta_0,'xdata',t,'ydata',data,'lb',LB,'ub',UB);
 ms = MultiStart;
-[theta_solve, theta_val] = run(ms,problem,20)
+[theta_solve, theta_val] = run(ms,problem,1)
 
 
 fit = fit + logNorm(t,theta_solve);

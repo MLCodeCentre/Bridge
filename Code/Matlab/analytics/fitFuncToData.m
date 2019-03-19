@@ -54,13 +54,13 @@ for n = 1:N
     logLs(n+1) = logL;                  
     % plot data and new fit
     subplot(N, 1, n)
-    plot(time, data);
+    plot(time, data, '--');
     hold on
     plot(time, fit);
     leg = legend('IAE',sprintf('$g_%d(t)$',n),'Location','northeast'); 
     leg.FontSize = 11;
     set(leg, 'Interpreter', 'latex')
-   
+       
     %ylabel('Acceleration [ms^{-2}]')
     
 end
@@ -93,11 +93,12 @@ set(gca,'xticklabel',0:N)
 
 %title('Akaike Information Criterion')
 
-% plotting the AICs 
+% plotting the AICs
+Rs = Rs/8000;
 yyaxis left
 plot(0:N, Rs,'--o')
-ylabel('Sum Squared Error [ms^{-2}]')
-legend('SSE','AIC')
+ylabel('Mean Square Error [ms^{-2}]')
+legend('MSE','AIC')
 leg.FontSize = 12;
 grid on;
 % set(gca,'xtick',1:N)

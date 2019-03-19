@@ -2,13 +2,13 @@ function preProcessData(response)
 
 response = response - mean(response);
 
-xmin = 20; xmax = 100;
+xmin = 0; xmax = 120;
 ymin = -0.2; ymax = 1.2;
 
 % Raw input data
 close all;
 time = linspace(0,length(response)/66.67,length(response));
-plot(time,response); xlabel('Time [s]'); ylabel('Acceleration [ms^{-2}]'); title('Raw Readings')
+plot(time,response); xlabel('t [s]'); ylabel('Acceleration [ms^{-2}]'); title('Raw Readings')
 
 %saveFigPDF(fullfile(rootDir(),'Paper','images','Raw_Data.pdf'))
 

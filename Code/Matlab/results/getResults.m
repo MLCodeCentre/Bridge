@@ -16,8 +16,8 @@ for file_num = 1:num_files
     close all
     
     file = files(file_num);
-    file_name = file.name
-    %file_name = '22.mat';
+    file_name = file.name    
+    file_name = '3.mat';
     full_file_name = fullfile(dataDir,'Test Samples',folder,file_name);
     file_load = load(full_file_name);
     responses = file_load.responses;
